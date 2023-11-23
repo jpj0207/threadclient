@@ -1,40 +1,47 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios'
+import axios from 'axios';
 import Header from './Header';
 
 const ThreadList = () => {
+  const [threads, setThreads] = useState([]);
+  const { board } = useParams();
+  const server_URL = `https://threadserver.netlify.app/${board}`;
 
-    // thread불러오기
-    const [Threads,setThreads] = useState([]);
-    const { board } = useParams();
-    const server_URL = `https://threadserver.netlify.app/${board}`
-    
-    const fetchData = async()=>{
-        const res = await axios.get(server_URL)
-        setThreads(res.data);
-    };
-    useEffect(()=>{fetchData()},[]); //한번만 실행되도록(setTHread하면 렌더, 모든 코드 다시 실행, 그럼 또 setThread....)
-    return (
-        <div>
-            <Header></Header>
-            <h2>
-                <Link to={`/${board}/write`} className="link">
-                    thread 추가
-                </Link>
-            </h2>
-            <h3>목록</h3>
-            {/* threads.map으로 리스트 만들기 */}
-                <ul type="none">
-                    {Threads.map((Thread)=>(
-                        <li key={Thread._id}>
-                            <Link to={`/${board}/thread/${Thread.id}`}>{Thread.title}</Link>
-                        </li>
-                    ))}
-                </ul>
-        </div>
-    );
+  // fetchData 함수를 외부로 빼서 재사용
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(server_URL);
+      setThreads(res.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+    // 한번만 실행되도록 [] 사용
+    fetchData();
+  }, []); // 한 번만 실행되도록 빈 의존성 배열 사용
+
+  return (
+    <div>
+      <Header />
+      <h2>
+        <Link to={`/${board}/write`} className="link">
+          thread 추가
+        </Link>
+      </h2>
+      <h3>목록</h3>
+      {/* threads.map으로 리스트 만들기 */}
+      <ul type="none">
+        {threads.map((thread) => (
+          <li key={thread._id}>
+            <Link to={`/${board}/thread/${thread.id}`}>{thread.title}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 };
 
 export default ThreadList;
