@@ -19,9 +19,8 @@ const ThreadList = () => {
   };
 
   useEffect(() => {
-    // 한번만 실행되도록 [] 사용
     fetchData();
-  }, []); // 한 번만 실행되도록 빈 의존성 배열 사용
+  }, [fetchData]);
 
   return (
     <div>
