@@ -6,12 +6,13 @@ import Header from './Header';
 const ThreadList = () => {
   const [threads, setThreads] = useState([]);
   const { board } = useParams();
-  const server_URL = `https://threadserver.netlify.app/${board}`;
+  const server_URL = `https://evocative-line-406102.du.r.appspot.com/${board}`;
 
   // useCallback을 사용하여 fetchData 감싸기
   const fetchData = useCallback(async () => {
     try {
       const res = await axios.get(server_URL);
+      console.log(res.data);
       setThreads(res.data);
     } catch (error) {
       console.error('Error fetching data:', error);
