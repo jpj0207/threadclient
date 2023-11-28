@@ -1,23 +1,28 @@
+import React, { useState, useEffect, useCallback } from 'react';
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios'
 import Header from './Header';
 
 const Thread = () => {
+    const [threads, setThreads] = useState([]);
+    const { board } = useParams();
+    const server_URL = `https://evocative-line-406102.du.r.appspot.com/${board}`;
 
-    //보드 이름에 맞는 파일 속 데이터.json파일의 thread값 가져오기
-    const Threadinfo = {
-        'id' : '1',
-        'title' : 'The Smiths',
-        'description' : 'There is a light that never goes out'
-    }
-    //나중에 CommentList로 대체 할 듯
-    const Commentinfo = [{
-        'id' : '1',
-        'description' : 'Take me out tonight'
-    },
-    {
-        'id' : '2',
-        'description' :'Take me anywhere i don\'t care'
-    }]
+      // useCallback을 사용하여 fetchData 감싸기
+    const fetchData = useCallback(async () => {
+        try {
+        const res = await axios.get(server_URL);
+        console.log(res.data);
+        setThreads(res.data);
+        } catch (error) {
+        console.error('Error fetching data:', error);
+        }
+    }, [server_URL]); // 의존성 배열에 server_URL 추가
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]); // 의존성 배열에 fetchData 추가
 
     return (
         <div>
